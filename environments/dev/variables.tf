@@ -15,3 +15,10 @@ variable "environment" {
   type        = string
   default     = "dev"
 }
+
+# --- SENHAS E SEGURANÇA ---
+variable "db_password" {
+  description = "Senha do banco de dados RDS. Deve ser passada via variável de ambiente ou arquivo .tfvars"
+  type        = string
+  sensitive   = true
+}
