@@ -14,11 +14,15 @@ A camada fundamental da infraestrutura.
 * **Subnetting em Camadas**: Implantação automatizada de subnets públicas e privadas em múltiplas Zonas de Disponibilidade (Multi-AZ).
 * **Estratégia de Roteamento**: Tabelas de rotas isoladas para recursos privados e integração com Internet Gateway (IGW) para as camadas públicas.
 
-### Ambiente de Banco de Dados (modules/database)
-*Nota: Atualmente em desenvolvimento.*
+### Módulo de Banco de Dados (modules/database)
 * **Persistência Privada**: Instâncias RDS implantadas em subnets isoladas sem endpoints públicos.
-* **Acesso Seguro**: Integração com Bastion Hosts/Jump Servers para acesso administrativo.
+* **Segurança de Acesso**: O acesso é gerenciado internamente pela VPC, sem a necessidade de Bastion Hosts expostos.
 * **Gestão de Ciclo de Vida**: Otimizado para cargas de trabalho efêmeras visando a redução de custos operacionais.
+
+### Módulo de Computação (modules/compute)
+* **Acesso Seguro via SSM**: Instâncias EC2 gerenciadas via AWS Systems Manager Session Manager, eliminando a necessidade de chaves SSH e portas abertas.
+* **IAM Roles**: Configuração de "Instance Profiles" com permissões mínimas necessárias para a operação.
+* **AMI Dinâmica**: Busca automática da imagem mais recente do Amazon Linux 2023.
 
 ## Como Iniciar
 
@@ -39,9 +43,13 @@ chmod +x scaffold-infra.sh
 Para implantar o ambiente de desenvolvimento:
 
 ```bash
+# Dentro da pasta core-infra-aws/
 cd environments/dev
+
 terraform init
 terraform plan
+
+# O Terraform irá solicitar a senha do banco (variável db_password)
 terraform apply
 ```
 
@@ -57,5 +65,5 @@ terraform apply
 └── scaffold-infra.sh    # Automação de estrutura do projeto
 ```
 
-## Feito por:
-Rodolfo Martins 
+## Mantenedor
+Rodolfo Martins
