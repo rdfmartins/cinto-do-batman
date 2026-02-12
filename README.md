@@ -1,27 +1,18 @@
-# 🦇 Cinto do Batman (AWS Arsenal)
+# AWS Infrastructure Repository (Cinto do Batman)
 
-Bem-vindo ao repositório central de ferramentas e infraestrutura. Este monorepo agrupa diversos projetos de **Infrastructure as Code (IaC)**, scripts de automação e arquiteturas de referência para AWS.
+Este repositório centraliza projetos de Infraestrutura como Código (IaC), scripts de automação e padrões de arquitetura para o ecossistema AWS.
 
-Cada pasta neste repositório representa um projeto ou ferramenta independente.
+A organização segue o modelo de monorepo, onde cada diretório contém um projeto ou ferramenta independente com sua própria documentação e ciclo de vida.
 
-## 🗂️ Índice de Projetos
+## Índice de Projetos
 
 ### 1. [Core Infra AWS](./core-infra-aws)
-**Status:** 🟢 Estável
-*   **Descrição:** Arquitetura modular de referência para redes e bancos de dados.
-*   **Tech Stack:** Terraform, AWS VPC, RDS, Modular Design.
-*   **Destaques:** FinOps Ready, Multi-AZ, Segurança por Design.
+Arquitetura modular de referência para implantação de redes (VPC) e persistência de dados (RDS).
+* **Escopo:** Networking (Multi-AZ), Segurança (Isolamento de Subnets) e FinOps.
+* **Tecnologias:** Terraform, AWS.
+
+## Utilização
+Para utilizar os recursos deste repositório, navegue até o diretório do projeto desejado e consulte o arquivo `README.md` específico para instruções de configuração e implantação.
 
 ---
-
-## 🛠️ Como usar este repositório
-Navegue até a pasta do projeto desejado para ver a documentação específica e instruções de deploy.
-
-```bash
-# Exemplo: Acessando o Core Infra
-cd core-infra-aws
-./scaffold-infra.sh
-```
-
----
-*Mantido por Rodolfo Martins*
+Mantido por Rodolfo Martins
