@@ -1,7 +1,7 @@
 variable "project_name" {
   description = "Nome do projeto. Usado para prefixar recursos e garantir nomes únicos e rastreabilidade (Tagging Strategy)."
   type        = string
-  default     = "cinto-do-batman"
+  default     = "core-infra"
 }
 
 variable "environment" {
