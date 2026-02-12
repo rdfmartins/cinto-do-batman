@@ -35,7 +35,7 @@ module "database" {
   subnet_ids = module.network.private_subnet_ids
 
   db_name     = "coredb"
-  db_user     = "admin"
+  db_user     = "dbadmin"
   db_password = var.db_password
 }
 

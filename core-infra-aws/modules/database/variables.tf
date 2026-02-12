@@ -30,7 +30,7 @@ variable "db_engine" {
 variable "engine_version" {
   description = "Versão do motor do banco"
   type        = string
-  default     = "15.4"
+  default     = "15.7"
 }
 
 variable "instance_class" {
@@ -49,7 +49,7 @@ variable "db_name" {
 variable "db_user" {
   description = "Usuário master do banco"
   type        = string
-  default     = "admin"
+  default     = "dbadmin"
 }
 
 variable "db_password" {

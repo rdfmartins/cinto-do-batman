@@ -55,7 +55,7 @@ resource "aws_iam_instance_profile" "ssm_profile" {
 # --- SECURITY GROUP ---
 resource "aws_security_group" "compute_sg" {
   name        = "${var.project_name}-${var.environment}-compute-sg"
-  description = "Security Group para instâncias com acesso via SSM"
+  description = "Security Group for instances with SSM access"
   vpc_id      = var.vpc_id
 
   # NENHUMA regra de entrada (Ingress) é necessária para o SSM funcionar!
