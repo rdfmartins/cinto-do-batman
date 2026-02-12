@@ -1,61 +1,27 @@
-# Core Infra (AWS)
+# 🦇 Cinto do Batman (AWS Arsenal)
 
-Projeto de Infraestrutura como Código (IaC) focado em modularidade, segurança e otimização de custos (FinOps).
+Bem-vindo ao repositório central de ferramentas e infraestrutura. Este monorepo agrupa diversos projetos de **Infrastructure as Code (IaC)**, scripts de automação e arquiteturas de referência para AWS.
 
-Este repositório implementa um ambiente de nuvem pronto para produção utilizando Terraform. A arquitetura foi projetada para ser altamente reutilizável, permitindo a implantação rápida de ambientes isolados enquanto mantém padrões rigorosos de segurança.
+Cada pasta neste repositório representa um projeto ou ferramenta independente.
 
-## Visão Geral da Arquitetura
+## 🗂️ Índice de Projetos
 
-A infraestrutura é decomposta em módulos independentes para garantir a separação de responsabilidades e facilitar a manutenção.
+### 1. [Core Infra AWS](./core-infra-aws)
+**Status:** 🟢 Estável
+*   **Descrição:** Arquitetura modular de referência para redes e bancos de dados.
+*   **Tech Stack:** Terraform, AWS VPC, RDS, Modular Design.
+*   **Destaques:** FinOps Ready, Multi-AZ, Segurança por Design.
 
-### Módulo de Rede (modules/network)
-A camada fundamental da infraestrutura.
-* **Implementação de VPC**: Blocos CIDR personalizados e configuração de DNS.
-* **Subnetting em Camadas**: Implantação automatizada de subnets públicas e privadas em múltiplas Zonas de Disponibilidade (Multi-AZ).
-* **Estratégia de Roteamento**: Tabelas de rotas isoladas para recursos privados e integração com Internet Gateway (IGW) para as camadas públicas.
+---
 
-### Ambiente de Banco de Dados (modules/database)
-*Nota: Atualmente em desenvolvimento.*
-* **Persistência Privada**: Instâncias RDS implantadas em subnets isoladas sem endpoints públicos.
-* **Acesso Seguro**: Integração com Bastion Hosts/Jump Servers para acesso administrativo.
-* **Gestão de Ciclo de Vida**: Otimizado para cargas de trabalho efêmeras visando a redução de custos operacionais.
-
-## Como Iniciar
-
-### Pré-requisitos
-* Terraform >= 1.0
-* AWS CLI (configurado com as credenciais apropriadas)
-* Ambiente Bash
-
-### Automação de Estrutura (Scaffolding)
-Disponibilizamos um script utilitário para inicializar a estrutura do projeto e preparar o ambiente para novos módulos.
+## 🛠️ Como usar este repositório
+Navegue até a pasta do projeto desejado para ver a documentação específica e instruções de deploy.
 
 ```bash
-chmod +x scaffold-infra.sh
+# Exemplo: Acessando o Core Infra
+cd core-infra-aws
 ./scaffold-infra.sh
 ```
 
-### Processo de Implantação (Deploy)
-Para implantar o ambiente de desenvolvimento:
-
-```bash
-cd environments/dev
-terraform init
-terraform plan
-terraform apply
-```
-
-## Estrutura do Projeto
-
-```text
-.
-├── environments/        # Configurações específicas por ambiente (dev, prod)
-├── modules/             # Componentes de infraestrutura reutilizáveis
-│   ├── network/         # Lógica e recursos de rede
-│   ├── database/        # Lógica de persistência e banco de dados
-│   └── compute/         # Lógica de computação e escalabilidade
-└── scaffold-infra.sh    # Automação de estrutura do projeto
-```
-
-## Feito por:
-Rodolfo Martins 
+---
+*Mantido por Rodolfo Martins*
