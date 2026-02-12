@@ -8,14 +8,19 @@ terraform {
 }
 
 provider "aws" {
-  region = "us-east-1"
+  region = var.aws_region
 }
 
 module "network" {
   source = "../../modules/network"
 
-  project_name        = "cinto-batman-dev"
-  vpc_cidr            = "10.0.0.0/16"
-  public_subnets_cidr = ["10.0.1.0/24", "10.0.2.0/24"]
-  availability_zones  = ["us-east-1a", "us-east-1b"]
+  # Passando as variáveis para o módulo
+  project_name = var.project_name
+  environment  = var.environment
+
+  # Definições de Rede para DEV
+  vpc_cidr             = "10.0.0.0/16"
+  availability_zones   = ["us-east-1a", "us-east-1b"]
+  public_subnets_cidr  = ["10.0.1.0/24", "10.0.2.0/24"]
+  private_subnets_cidr = ["10.0.3.0/24", "10.0.4.0/24"]
 }
