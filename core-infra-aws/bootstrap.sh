@@ -89,10 +89,20 @@ fi
 
 echo -e "\n${GREEN}=== Processo Concluído com Sucesso! ===${NC}"
 
-# Listando a estrutura criada
-if command -v tree &> /dev/null;
-then
+echo -e "${YELLOW}Seu ambiente está pronto e validado para o deploy.${NC}\n"
+
+
+
+# Listando a estrutura de forma segura
+
+if command -v tree &> /dev/null; then
+
     tree -L 2
+
 else
-    ls -R
+
+    echo "Estrutura do Projeto:"
+
+    ls -R | grep ":$" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /'
+
 fi
