@@ -1,0 +1,7 @@
+# --- CONFIGURAÇÕES LOCAIS (SENSÍVEL) ---
+# INSTRUÇÕES: 
+# 1. Renomeie este arquivo para 'terraform.tfvars'
+# 2. Substitua o valor abaixo pela sua senha real
+# O arquivo 'terraform.tfvars' NUNCA será enviado para o GitHub (está no .gitignore).
+
+db_password = "substitua_pela_sua_senha_aqui"
