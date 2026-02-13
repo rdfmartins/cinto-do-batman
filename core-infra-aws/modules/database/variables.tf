@@ -56,6 +56,11 @@ variable "db_password" {
   description = "Senha master. Marcada como sensível para proteção de dados."
   type        = string
   sensitive   = true
+
+  validation {
+    condition     = !can(regex("[/@\" ]", var.db_password))
+    error_message = "A senha do banco não pode conter os caracteres: '/', '@', '\"' ou espaços em branco."
+  }
 }
 
 variable "allocated_storage" {
