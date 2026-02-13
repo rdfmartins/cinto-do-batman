@@ -52,3 +52,15 @@ module "compute" {
   public_subnet_id = module.network.public_subnet_ids[0] # Usando a primeira subnet pública
   instance_type    = "t3.micro"
 }
+
+# --- CONECTIVIDADE (SECURITY GROUP RULES) ---
+# Permite que a camada de Computação acesse a camada de Dados na porta padrão do Postgres (5432)
+resource "aws_security_group_rule" "allow_compute_to_db" {
+  type                     = "ingress"
+  from_port                = 5432
+  to_port                  = 5432
+  protocol                 = "tcp"
+  source_security_group_id = module.compute.security_group_id
+  security_group_id        = module.database.db_security_group_id
+  description              = "Allow traffic from Compute SG to Database SG"
+}
