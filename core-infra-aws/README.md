@@ -1,77 +1,91 @@
-# Core Infra (AWS)
+# Core Infra (AWS) ☁️
+> **Architecture as Code** | **Modular Design** | **Zero Trust Security**
 
-Projeto de Infraestrutura como Código (IaC) focado em modularidade, segurança e otimização de custos (FinOps).
+Este projeto implementa uma fundação completa de infraestrutura na AWS, desenhada para escalar desde o primeiro dia. Não é apenas um conjunto de scripts Terraform, mas uma implementação de referência para **Engenharia de Plataforma Moderna**.
 
-Este repositório implementa um ambiente de nuvem pronto para produção utilizando Terraform. A arquitetura foi projetada para ser altamente reutilizável, permitindo a implantação rápida de ambientes isolados enquanto mantém padrões rigorosos de segurança.
-
-## Destaques de Engenharia & Técnicas
-
-Além da infraestrutura básica, este projeto demonstra o uso de padrões avançados de Terraform e AWS:
-
-### 1. Dynamic Subnetting (Loops & Functions)
-Em vez de declarar recursos estáticos, utilizamos a meta-argumento `count` e funções como `element` para criar subnets dinamicamente baseadas na quantidade de zonas de disponibilidade (AZs) desejadas.
-*   **Benefício:** O código se adapta automaticamente se quisermos mudar de 2 para 3 AZs apenas alterando uma variável.
-
-### 2. Zero-Trust Access (SSM vs SSH)
-Adotamos uma postura de segurança moderna eliminando a necessidade de chaves SSH (`.pem`) e portas de entrada (Inbound Rules) abertas para a internet.
-*   **Técnica:** Utilizamos o **AWS Systems Manager (Session Manager)**. A instância EC2 possui uma IAM Role que permite ao agente SSM se conectar à API da AWS de "dentro para fora".
-*   **Resultado:** Redução drástica da superfície de ataque (Porta 22 fechada).
-
-### 3. State Isolation & Data Injection
-Os módulos são projetados para serem agnósticos. Eles não "sabem" valores hardcoded.
-*   **Técnica:** Uso intensivo de `outputs.tf` para exportar IDs (VPC, Subnets) e injetá-los como dependência em outros módulos (Ex: O módulo de Computação consome o ID da VPC gerado pelo módulo de Rede).
-
-### 4. FinOps & Ambientes Efêmeros
-O banco de dados foi configurado com `skip_final_snapshot = true` e storage otimizado para desenvolvimento.
-*   **Objetivo:** Permitir que o comando `terraform destroy` seja executado sem deixar "faturas fantasmas" (snapshots órfãos) na conta AWS, facilitando a criação e destruição de ambientes de laboratório.
+O foco está em entregar um ambiente pronto para produção, com governança de segurança e controle de custos (FinOps) nativos.
 
 ---
 
-## Visão Geral da Arquitetura
+## 🏗️ Decisões de Arquitetura (Design Docs)
 
-A infraestrutura é decomposta em módulos independentes:
+### ⚡ 1. Elasticidade & Dinamismo
+Abandonamos a configuração estática.
+*   **A Técnica:** Uso intensivo de `count` e `for_each` do Terraform.
+*   **O Ganho:** O módulo de rede se adapta sozinho. Quer mudar de 2 para 3 Zonas de Disponibilidade (AZs)? Basta alterar uma variável. O código reescreve a infraestrutura sem intervenção manual.
 
-### Módulo de Rede (modules/network)
-* **VPC**: Blocos CIDR parametrizáveis.
-* **Subnetting**: Separação física entre camadas Públicas e Privadas.
-* **Routing**: Tabelas de rotas dedicadas.
+### 🔒 2. Segurança "Zero Trust" (SSM)
+Eliminamos a superfície de ataque mais comum em nuvem: a Porta 22 (SSH).
+*   **A Técnica:** Implementação do **AWS Systems Manager (Session Manager)**.
+*   **O Ganho:** Nenhuma chave `.pem` para gerenciar, nenhuma porta aberta para a internet. O acesso é auditado, temporário e criptografado pela AWS.
 
-### Módulo de Banco de Dados (modules/database)
-* **RDS Privado**: Bancos de dados isolados da internet pública.
-* **Security Groups**: Regras restritivas de acesso.
+### 🧩 3. Modularidade & Injeção de Dependência
+Cada componente (Rede, Banco, Computação) é isolado e agnóstico.
+*   **A Técnica:** Uso de `outputs.tf` para passar dados entre módulos.
+*   **O Ganho:** Redução do "Blast Radius" (Raio de Explosão). Uma mudança no banco de dados dificilmente quebrará a rede.
 
-### Módulo de Computação (modules/compute)
-* **EC2 + SSM**: Instâncias gerenciadas sem Bastion Host.
-* **AMI Dinâmica**: Uso de `data sources` para buscar sempre a imagem Linux mais atual.
+### 💰 4. FinOps Nativo
+A infraestrutura nasce otimizada para o bolso.
+*   **A Técnica:** Ambientes efêmeros com `skip_final_snapshot = true` e storage GP3/GP2 otimizado.
+*   **O Ganho:** Facilidade para criar e destruir ambientes de laboratório sem gerar custos "fantasmas" (snapshots esquecidos).
 
-## Como Iniciar
+---
 
-### Pré-requisitos
-* Terraform >= 1.0
-* AWS CLI configurado
+## 🛠️ O Arsenal (Módulos)
 
-### Automação (Bootstrap)
+### 🌐 Módulo de Rede (`modules/network`)
+*   **VPC Customizada:** Controle total de CIDR e DNS.
+*   **Isolamento:** Subnets Públicas (Internet) e Privadas (Dados/App).
+*   **Roteamento:** Tabelas de rotas dedicadas e IGW gerenciado.
+
+### 🗄️ Módulo de Banco de Dados (`modules/database`)
+*   **RDS Seguro:** Instâncias isoladas na camada privada.
+*   **Proteção:** Security Groups restritivos (apenas a VPC acessa).
+*   **Engine:** PostgreSQL (Versão LTS).
+
+### 💻 Módulo de Computação (`modules/compute`)
+*   **EC2 SSM-Ready:** Instâncias com IAM Profiles automáticos para acesso seguro.
+*   **AMI Inteligente:** Busca automática da imagem Amazon Linux 2023 mais recente.
+
+---
+
+## 🚀 Como Iniciar
+
+### 1. Preparação (Bootstrap)
+Execute o script de automação para verificar dependências e instalar ferramentas de qualidade (TFLint):
+
 ```bash
 chmod +x bootstrap.sh
 ./bootstrap.sh
 ```
 
-### Deploy (Dev Environment)
+### 2. Deploy (Ambiente Dev)
 ```bash
 cd environments/dev
+
+# Inicialize o backend
 terraform init
+
+# Planeje a execução (O Terraform pedirá a senha do banco)
 terraform plan
+
+# Aplique a infraestrutura
 terraform apply
 ```
 
-## Estrutura do Projeto
+---
+
+## 📂 Estrutura do Repositório
 
 ```text
 .
-├── environments/        # Configurações (dev, prod)
-├── modules/             # Blocos de construção (network, database, compute)
-└── bootstrap.sh         # Automação de ambiente e qualidade (Tríade da Robustez)
+├── environments/        # Configurações por ambiente (dev, prod)
+├── modules/             # Blocos de construção reutilizáveis
+│   ├── network/         # Camada de Rede
+│   ├── database/        # Camada de Dados
+│   └── compute/         # Camada de Aplicação
+└── bootstrap.sh         # Automação de Qualidade & Setup
 ```
 
-## Mantenedor
-Rodolfo Martins
+---
+**Mantido por Rodolfo Martins**
