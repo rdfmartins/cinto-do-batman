@@ -50,10 +50,10 @@ A infraestrutura é decomposta em módulos independentes:
 * Terraform >= 1.0
 * AWS CLI configurado
 
-### Automação (Scaffolding)
+### Automação (Bootstrap)
 ```bash
-chmod +x scaffold-infra.sh
-./scaffold-infra.sh
+chmod +x bootstrap.sh
+./bootstrap.sh
 ```
 
 ### Deploy (Dev Environment)
@@ -70,7 +70,7 @@ terraform apply
 .
 ├── environments/        # Configurações (dev, prod)
 ├── modules/             # Blocos de construção (network, database, compute)
-└── scaffold-infra.sh    # Automação
+└── bootstrap.sh         # Automação de ambiente e qualidade (Tríade da Robustez)
 ```
 
 ## Mantenedor
