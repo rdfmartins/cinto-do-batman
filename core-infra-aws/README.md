@@ -1,91 +1,118 @@
-# Core Infra (AWS) ☁️
-> **Architecture as Code** | **Modular Design** | **Zero Trust Security**
+# Core Infra (AWS)
+> **Architecture as Code** | **Modular Design** | **FinOps First**
 
-Este projeto implementa uma fundação completa de infraestrutura na AWS, desenhada para escalar desde o primeiro dia. Não é apenas um conjunto de scripts Terraform, mas uma implementação de referência para **Engenharia de Plataforma Moderna**.
+Fundação de infraestrutura AWS focada em desenvolvimento rápido e arquitetura de referência. Este projeto demonstra padrões modernos de IaC (Infrastructure as Code) com Terraform modular, priorizando velocidade de provisionamento e custo zero quando destruído.
 
-O foco está em entregar um ambiente pronto para produção, com governança de segurança e controle de custos (FinOps) nativos.
-
----
-
-## 🏗️ Decisões de Arquitetura (Design Docs)
-
-### ⚡ 1. Elasticidade & Dinamismo
-Abandonamos a configuração estática.
-*   **A Técnica:** Uso intensivo de `count` e `for_each` do Terraform.
-*   **O Ganho:** O módulo de rede se adapta sozinho. Quer mudar de 2 para 3 Zonas de Disponibilidade (AZs)? Basta alterar uma variável. O código reescreve a infraestrutura sem intervenção manual.
-
-### 🔒 2. Segurança "Zero Trust" (SSM)
-Eliminamos a superfície de ataque mais comum em nuvem: a Porta 22 (SSH).
-*   **A Técnica:** Implementação do **AWS Systems Manager (Session Manager)**.
-*   **O Ganho:** Nenhuma chave `.pem` para gerenciar, nenhuma porta aberta para a internet. O acesso é auditado, temporário e criptografado pela AWS.
-
-### 🧩 3. Modularidade & Injeção de Dependência
-Cada componente (Rede, Banco, Computação) é isolado e agnóstico.
-*   **A Técnica:** Uso de `outputs.tf` para passar dados entre módulos.
-*   **O Ganho:** Redução do "Blast Radius" (Raio de Explosão). Uma mudança no banco de dados dificilmente quebrará a rede.
-
-### 💰 4. FinOps Nativo
-A infraestrutura nasce otimizada para o bolso.
-*   **A Técnica:** Ambientes efêmeros com `skip_final_snapshot = true` e storage GP3/GP2 otimizado.
-*   **O Ganho:** Facilidade para criar e destruir ambientes de laboratório sem gerar custos "fantasmas" (snapshots esquecidos).
+**Propósito:** Ambiente de desenvolvimento/testes que serve como base para aprendizado e prototipagem, implementando conceitos de segurança moderna (Zero Trust via SSM) e design modular escalável.
 
 ---
 
-## 🛠️ O Arsenal (Módulos)
+## Escopo & Limitações
 
-### 🌐 Módulo de Rede (`modules/network`)
-*   **VPC Customizada:** Controle total de CIDR e DNS.
-*   **Isolamento:** Subnets Públicas (Internet) e Privadas (Dados/App).
-*   **Roteamento:** Tabelas de rotas dedicadas e IGW gerenciado.
+**Este é um ambiente de DEV otimizado para:**
+- Prototipagem rápida de aplicações
+- Testes de integração AWS
+- Aprendizado de Terraform modular
+- Demonstração de padrões arquiteturais
 
-### 🗄️ Módulo de Banco de Dados (`modules/database`)
-*   **RDS Seguro:** Instâncias isoladas na camada privada.
-*   **Proteção:** Security Groups restritivos (apenas a VPC acessa).
-*   **Engine:** PostgreSQL (Versão LTS).
+**Não inclui (por design):**
+- Backups automáticos (RDS com `retention = 0`)
+- Criptografia at-rest
+- NAT Gateway (subnets privadas sem saída para internet)
+- Secrets Manager (senha via variável local)
+- Monitoring/Alertas (CloudWatch)
+- Alta disponibilidade (instância única, sem ASG)
 
-### 💻 Módulo de Computação (`modules/compute`)
-*   **EC2 SSM-Ready:** Instâncias com IAM Profiles automáticos para acesso seguro.
-*   **AMI Inteligente:** Busca automática da imagem Amazon Linux 2023 mais recente.
+> Nota: Para requisitos de produção, consulte a seção "Roadmap para Produção" no final deste documento.
 
 ---
 
-## 🚀 Como Iniciar
+## Decisões de Arquitetura (Design Docs)
 
-### 1. Preparação (Bootstrap)
-Execute o script de automação para verificar dependências e instalar ferramentas de qualidade (TFLint):
+### 1. Elasticidade & Dinamismo
+Abandono de configurações estáticas em favor de flexibilidade.
+*   **Técnica:** Uso de `count` e `for_each` do Terraform.
+*   **Resultado:** O módulo de rede adapta-se dinamicamente. A alteração da quantidade de Zonas de Disponibilidade (AZs) exige apenas a atualização de uma variável, sem intervenção manual no código core.
 
-```bash
-chmod +x bootstrap.sh
-./bootstrap.sh
-```
+### 2. Segurança Zero Trust (SSM)
+Eliminação da superfície de ataque via Porta 22 (SSH).
+*   **Técnica:** Implementação do AWS Systems Manager (Session Manager).
+*   **Resultado:** Gestão simplificada de acesso sem chaves .pem, com tráfego auditado e criptografado nativamente pela AWS.
+*   **Trade-off:** Porta 80 liberada para testes HTTP. Em ambientes produtivos, recomenda-se a substituição por Application Load Balancer (ALB) com HTTPS.
 
-### 2. Deploy (Ambiente Dev)
+### 3. Modularidade & Injeção de Dependência
+Isolamento lógico entre Rede, Banco e Computação.
+*   **Técnica:** Comunicação entre módulos via `outputs.tf`.
+*   **Resultado:** Redução do Raio de Explosão (Blast Radius). Alterações em camadas de dados ou computação não impactam a estabilidade da rede base.
+
+### 4. FinOps Nativo
+Otimização para custo zero em ambientes efêmeros.
+*   **Técnica:** `skip_final_snapshot = true`, instâncias da família t3, storage GP3 mínimo.
+*   **Resultado:** Ciclos de criação e destruição de ambientes sem custos residuais (volumes ou snapshots órfãos).
+
+---
+
+## Módulos do Projeto
+
+### Módulo de Rede (modules/network)
+* VPC Customizada com controle total de CIDR.
+* Segregação entre Subnets Públicas e Privadas.
+* Tabelas de rotas dedicadas e Internet Gateway (IGW).
+
+### Módulo de Banco de Dados (modules/database)
+* Instâncias RDS PostgreSQL isoladas na camada privada.
+* Security Groups restritivos com acesso limitado à VPC.
+
+### Módulo de Computação (modules/compute)
+* Instâncias EC2 configuradas para acesso via SSM.
+* Busca dinâmica da AMI Amazon Linux 2023 mais recente.
+
+---
+
+## Instruções de Uso
+
+### Pré-requisitos
+- AWS CLI configurado
+- Terraform >= 1.0
+
+### 1. Configuração de Credenciais
+Para automatizar o processo e evitar prompts interativos, utilize o arquivo de variáveis locais:
+
 ```bash
 cd environments/dev
+cp terraform.tfvars.example terraform.tfvars
+# Edite o arquivo terraform.tfvars com sua senha do banco
+```
 
-# Inicialize o backend
+### 2. Implantação
+```bash
 terraform init
-
-# Planeje a execução (O Terraform pedirá a senha do banco)
 terraform plan
-
-# Aplique a infraestrutura
 terraform apply
 ```
 
+### 3. Acesso aos Recursos
+**Acesso via SSM (Session Manager):**
+```bash
+aws ssm start-session --target <INSTANCE_ID>
+```
+
+### 4. Encerramento (Custo Zero)
+```bash
+terraform destroy
+```
+
 ---
 
-## 📂 Estrutura do Repositório
+## Roadmap para Produção
 
-```text
-.
-├── environments/        # Configurações por ambiente (dev, prod)
-├── modules/             # Blocos de construção reutilizáveis
-│   ├── network/         # Camada de Rede
-│   ├── database/        # Camada de Dados
-│   └── compute/         # Camada de Aplicação
-└── bootstrap.sh         # Automação de Qualidade & Setup
-```
+Para evoluir esta arquitetura para ambientes críticos, recomenda-se:
+
+- **Segurança:** Implementar AWS Secrets Manager, Criptografia at-rest (KMS) e WAF.
+- **Infraestrutura:** Adicionar NAT Gateway, Application Load Balancer e Auto Scaling Groups.
+- **Observabilidade:** Configurar CloudWatch Alarms, RDS Enhanced Monitoring e Logs centralizados.
+- **Resiliência:** Habilitar RDS Multi-AZ e políticas de backup automatizado.
+- **Operações:** Configurar Remote State (S3 + DynamoDB) e pipelines de CI/CD.
 
 ---
 **Mantido por Rodolfo Martins**

@@ -1,41 +1,19 @@
 # AWS Infrastructure Repository (Cinto do Batman)
 
-Este repositório centraliza projetos de **Infraestrutura como Código (IaC)**, automação de **DevOps** e padrões de arquitetura corporativa para AWS.
+Este repositório centraliza projetos de Infraestrutura como Código (IaC) e padrões de arquitetura para o ecossistema AWS.
 
-A organização segue o modelo de **Monorepo**, onde cada diretório contém uma solução independente, documentada e pronta para produção.
+A organização segue o modelo de monorepo, onde cada diretório contém um projeto ou ferramenta independente com sua própria documentação e ciclo de vida.
 
----
+## Índice de Projetos
 
-## 🔹 Projeto em Destaque
+### 1. [Core Infra AWS](./core-infra-aws)
+Arquitetura modular de referência para implantação de ambientes de desenvolvimento e testes.
+* **Foco:** Networking (Multi-AZ), Segurança (Acesso via SSM) e FinOps.
+* **Técnicas:** Terraform Modular, AWS VPC, RDS e EC2.
+* **Status:** Ambiente de desenvolvimento otimizado para custo e prototipagem rápida.
 
-### [Core Infra AWS](./core-infra-aws)
-**A Fundação Sólida para Ambientes Cloud Native.**
-
-Este não é apenas um script de infraestrutura, é um framework completo de engenharia de plataforma que implementa:
-
-*   **Zero Trust Security:** Acesso a servidores via AWS Systems Manager (SSM) sem portas SSH abertas.
-*   **Arquitetura Modular:** Separação estrita de responsabilidades entre Rede, Dados e Computação.
-*   **FinOps-Ready:** Ambientes efêmeros com destruição limpa e uso de recursos otimizados.
-*   **Qualidade Automatizada:** Script de `bootstrap` que instala dependências e aplica Análise Estática de Código (AST com TFLint).
-
-**Stack Tecnológica:** Terraform, AWS VPC, RDS (Postgres), EC2, IAM Roles.
-
----
-
-## 📂 Outros Projetos
-*(Novas ferramentas serão adicionadas aqui conforme o arsenal cresce)*
-
-## 🛠️ Utilização Geral
-Para utilizar qualquer recurso deste repositório, navegue até o diretório do projeto desejado. Cada projeto possui seu próprio script de inicialização (`bootstrap.sh`) e documentação detalhada.
-
-```bash
-# Exemplo: Iniciando o Core Infra
-cd core-infra-aws
-./bootstrap.sh
-```
+## Utilização
+Para utilizar os recursos deste repositório, navegue até o diretório do projeto desejado e consulte o arquivo `README.md` específico para instruções de configuração e implantação.
 
 ---
 **Mantido por Rodolfo Martins**
-
-
-*Arquitetura de Soluções & Engenharia de Cloud*
