@@ -1,3 +1,14 @@
+terraform {
+  required_version = ">= 1.0"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
 # --- VPC: O Coração da Rede ---
 # Aqui definimos o espaço isolado na AWS onde todos os recursos viverão.
 resource "aws_vpc" "main" {
@@ -16,8 +27,8 @@ resource "aws_vpc" "main" {
 resource "aws_subnet" "public" {
   count = length(var.public_subnets_cidr)
 
-  vpc_id                  = aws_vpc.main.id
-  cidr_block              = var.public_subnets_cidr[count.index]
+  vpc_id     = aws_vpc.main.id
+  cidr_block = var.public_subnets_cidr[count.index]
   # O element() faz o 'giro' nas AZs: se tivermos 3 subnets e 2 AZs, a 3ª volta para a primeira AZ.
   availability_zone       = element(var.availability_zones, count.index)
   map_public_ip_on_launch = true # Garante que recursos aqui ganhem IP público automaticamente

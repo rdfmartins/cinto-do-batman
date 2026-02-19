@@ -1,3 +1,14 @@
+terraform {
+  required_version = ">= 1.0"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
 # --- BUSCA DA IMAGEM (AMI) ---
 data "aws_ami" "amazon_linux_2023" {
   most_recent = true
@@ -87,7 +98,7 @@ resource "aws_security_group" "compute_sg" {
 resource "aws_instance" "app_server" {
   ami           = var.ami_id != "" ? var.ami_id : data.aws_ami.amazon_linux_2023.id
   instance_type = var.instance_type
-  
+
   # Aqui entra a mágica do SSM:
   iam_instance_profile = aws_iam_instance_profile.ssm_profile.name
 

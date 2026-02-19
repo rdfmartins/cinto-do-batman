@@ -1,3 +1,14 @@
+terraform {
+  required_version = ">= 1.0"
+
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
 # --- AGRUPAMENTO DE SUBNETS ---
 # O RDS exige saber quais subnets ele pode usar. Agrupamos as privadas aqui.
 resource "aws_db_subnet_group" "main" {
